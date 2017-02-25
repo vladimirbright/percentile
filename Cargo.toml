@@ -1,0 +1,7 @@
+[package]
+name = "percentile"
+version = "0.0.1"
+authors = ["Vladimir Prokhoda <vladimirbright@gmail.com>"]
+
+[dependencies]
+clap = "^2"
