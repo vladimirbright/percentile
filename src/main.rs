@@ -40,51 +40,50 @@ fn print_results(mut timings: Vec<f32>) {
 // This is the main function
 fn main() {
 
-	let matches = App::new("Calculate response time percentiles on logs")
-		.version("0.0.1")
-		.author("Vladimir Prokhoda <vladimirbright@gmail.com>")
-		.arg(Arg::with_name("separator")
-		   .short("s")
-		   .long("separator")
-           .default_value(" ")
-		   .help("Column separator")
-		   .takes_value(true))
-		.arg(Arg::with_name("column")
-		   .short("c")
-		   .long("column")
-           .default_value("8")
-		   .use_delimiter(false)
-		   .help("Column number to use")
-		   .takes_value(true))
-		.arg(Arg::with_name("input")
-		   .help("Sets the input file to use")
-		   .required(true)
-		   .index(1))
-		.arg(Arg::with_name("print")
-		   .short("p")
-		   .long("print")
-		   .help("Print matched rows"))
-		.get_matches();
+    let matches = App::new("Calculate response time percentiles on logs")
+        .version("0.0.1")
+        .author("Vladimir Prokhoda <vladimirbright@gmail.com>")
+        .arg(Arg::with_name("separator")
+            .short("s")
+            .long("separator")
+            .default_value(" ")
+            .help("Column separator")
+            .takes_value(true))
+        .arg(Arg::with_name("column")
+            .short("c")
+            .long("column")
+            .default_value("8")
+            .use_delimiter(false)
+            .help("Column number to use")
+            .takes_value(true))
+        .arg(Arg::with_name("input")
+            .help("Sets the input file to use")
+            .required(true)
+            .index(1))
+            .arg(Arg::with_name("print")
+            .short("p")
+            .long("print")
+            .help("Print matched rows"))
+        .get_matches();
 
     let sep = match matches.value_of("separator") {
-		Some(f) => f,
+        Some(f) => f,
         None => panic!("provide --separator option"),
-	};
-	let separator = match sep {
-		"\\t" => "\t",
-		_ => sep,
-	};
-	let column = match matches.value_of("column") {
-		Some(f) => f,
+    };
+    let separator = match sep {
+        "\\t" => "\t",
+        _ => sep,
+    };
+    let column = match matches.value_of("column") {
+        Some(f) => f,
         None => panic!("provide --column option"),
-	};
+    };
     let timing_index: usize = match usize::from_str(column) {
-		Ok(f) => f,
-		Err(_) => panic!("--column must be integer"),
-	};
+        Ok(f) => f,
+        Err(_) => panic!("--column must be integer"),
+    };
 
 	let file_path = matches.value_of("input").unwrap();
-
     let path = Path::new(&file_path);
     let display = path.display();
 
@@ -92,7 +91,6 @@ fn main() {
         Err(why) => panic!("couldn't open {}: {}", display, why.description()),
         Ok(f) => f,
     };
-
 	let file = BufReader::with_capacity(128 * 1024, &f);
 
     let mut timings: Vec<f32> = vec![];
