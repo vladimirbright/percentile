@@ -4,8 +4,34 @@ Calculate percentiles on response time from logs.
 
 Usage:
 ```
-cargo build --release
+# First have to build it!
+vladimirbright@percentile2$ cargo build --release
 
+# Get help.
+vladimirbright@percentile2$ time ./target/release/percentile --help
+Calculate response time percentiles on logs 0.0.1
+Vladimir Prokhoda <vladimirbright@gmail.com>
+
+USAGE:
+    percentile [FLAGS] [OPTIONS] <input>
+
+FLAGS:
+    -h, --help       Prints help information
+    -p, --print      Print matched rows
+    -V, --version    Prints version information
+
+OPTIONS:
+    -c, --column <column>          Column number to use [default: 8]
+    -s, --separator <separator>    Column separator [default:  ]
+
+ARGS:
+    <input>    Sets the input file to use
+
+real    0m0.011s
+user    0m0.002s
+sys     0m0.002s
+
+# And we can run it.
 vladimirbright@percentile2$ time ./target/release/percentile --separator=' ' --column=8 ../percentile/logs/access.log
 
 Results:
