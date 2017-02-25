@@ -36,7 +36,6 @@ sys     0m0.002s
 
 ## And we can run it.
 
-Parent
 ```
 vladimirbright@percentile2$ time ./target/release/percentile --separator=' ' --column=8 ../percentile/logs/access.log
 
