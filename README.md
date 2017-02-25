@@ -2,12 +2,14 @@
 
 Calculate percentiles on response time from logs.
 
-Usage:
+## First have to build it!
 ```
-# First have to build it!
 vladimirbright@percentile2$ cargo build --release
+```
 
-# Get help.
+## Get help.
+```
+
 vladimirbright@percentile2$ time ./target/release/percentile --help
 Calculate response time percentiles on logs 0.0.1
 Vladimir Prokhoda <vladimirbright@gmail.com>
@@ -30,8 +32,12 @@ ARGS:
 real    0m0.011s
 user    0m0.002s
 sys     0m0.002s
+```
 
-# And we can run it.
+## And we can run it.
+
+Parent
+```
 vladimirbright@percentile2$ time ./target/release/percentile --separator=' ' --column=8 ../percentile/logs/access.log
 
 Results:
@@ -48,8 +54,7 @@ real    0m0.007s
 user    0m0.002s
 sys     0m0.002s
 ```
-
-where log format something like this (e.g. space separated and response time column on 8 index):
+In parentheses index of percentile, a.k.a. number of requests under this percentile. Log format something like this (e.g. space separated and response time column on 8 index):
 
 ```
 vladimirbright@percentile2$ tail ../percentile/logs/access.log
