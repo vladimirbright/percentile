@@ -41,7 +41,6 @@ fn main() {
 
     let matches = App::new("Calculate response time percentiles on logs")
         .version("0.0.1")
-        .author("Vladimir Prokhoda <vladimirbright@gmail.com>")
         .arg(Arg::with_name("separator")
             .short("s")
             .long("separator")
@@ -96,7 +95,7 @@ fn main() {
         }
     }
 
-	let file_path = matches.value_of("input").unwrap();
+    let file_path = matches.value_of("input").unwrap();
     let path = Path::new(&file_path);
     let display = path.display();
 
@@ -104,21 +103,21 @@ fn main() {
         Err(why) => panic!("couldn't open {}: {}", display, why.description()),
         Ok(f) => f,
     };
-	let file = BufReader::with_capacity(128 * 1024, &f);
+    let file = BufReader::with_capacity(128 * 1024, &f);
 
     let mut timings: Vec<f32> = vec![];
     let mut has_errors: bool = false;
 
-	for line in file.lines().filter_map(|result| result.ok()) {
-		let v: Vec<&str> = line.split(separator).collect();
+    for line in file.lines().filter_map(|result| result.ok()) {
+        let v: Vec<&str> = line.split(separator).collect();
         let t = v[timing_index];
 
         if t == "-" {
             continue;
         }
-		if matches.is_present("print") {
-			println!("{}", line);
-		}
+        if matches.is_present("print") {
+            println!("{}", line);
+        }
         match f32::from_str(&t) {
             Err(_) => {
                 has_errors = true;
