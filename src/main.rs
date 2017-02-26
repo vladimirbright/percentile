@@ -94,6 +94,7 @@ fn main() {
 	let file = BufReader::with_capacity(128 * 1024, &f);
 
     let mut timings: Vec<f32> = vec![];
+    let mut has_errors: bool = false;
 
 	for line in file.lines().filter_map(|result| result.ok()) {
 		let v: Vec<&str> = line.split(separator).collect();
@@ -106,9 +107,16 @@ fn main() {
 			println!("{}", line);
 		}
         match f32::from_str(&t) {
-            Err(_) => continue,
+            Err(_) => {
+                has_errors = true;
+                continue;
+            },
             Ok(f) => timings.push(f),
         };
+    }
+
+    if timings.len() == 0 && has_errors {
+        panic!("column {} does not contain valid numbers", timing_index)
     }
 
     print_results(timings);
