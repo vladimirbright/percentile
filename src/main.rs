@@ -4,6 +4,7 @@ use clap::{Arg, App};
 use std::cmp::Ordering::Equal;
 use std::error::Error;
 use std::f32;
+use std::i32;
 use std::fs::File;
 use std::io::BufRead;
 use std::io::BufReader;
@@ -11,7 +12,7 @@ use std::path::Path;
 use std::str::FromStr;
 
 
-fn print_results(mut timings: Vec<f32>) {
+fn print_results(mut timings: Vec<f32>, percentiles: Vec<i32>) {
     timings.sort_by(|a, b| a.partial_cmp(b).unwrap_or(Equal));
 
     let start: usize = 0;
@@ -20,20 +21,18 @@ fn print_results(mut timings: Vec<f32>) {
         return;
     };
     let median: usize = end / 2;
-    let p70: usize = end.checked_mul(70).unwrap().checked_div(100).unwrap();
-    let p80: usize = end.checked_mul(80).unwrap().checked_div(100).unwrap();
-    let p95: usize = end.checked_mul(95).unwrap().checked_div(100).unwrap();
-    let p99: usize = end.checked_mul(99).unwrap().checked_div(100).unwrap();
 
     println!("");
     println!("Results:");
     println!("    Total count:   {}", timings.len());
     println!("    Min:           {}", timings[start]);
     println!("    Median:        {} ({})", timings[median], median + 1);
-    println!("    70 percentile: {} ({})", timings[p70], p70 + 1);
-    println!("    80 percentile: {} ({})", timings[p80], p80 + 1);
-    println!("    95 percentile: {} ({})", timings[p95], p95 + 1);
-    println!("    99 percentile: {} ({})", timings[p99], p99 + 1);
+
+    for perc in percentiles {
+        let pvalue: usize = end.checked_mul(perc as usize).unwrap().checked_div(100).unwrap();
+        println!("    {} percentile: {} ({})", perc, timings[pvalue], pvalue + 1);
+    }
+
     println!("    Max:           {} ({})", timings[end], end + 1);
 }
 
@@ -60,7 +59,13 @@ fn main() {
             .help("Sets the input file to use")
             .required(true)
             .index(1))
-            .arg(Arg::with_name("print")
+        .arg(Arg::with_name("percentiles")
+            .short("r")
+            .long("percentiles")
+            .default_value("70,80,95,99")
+            .help("Percentiles to compute")
+            .takes_value(true))
+        .arg(Arg::with_name("print")
             .short("p")
             .long("print")
             .help("Print matched rows"))
@@ -83,6 +88,14 @@ fn main() {
         Err(_) => panic!("--column must be integer"),
     };
 
+    let mut percentiles: Vec<i32> = vec![];
+    for part in matches.value_of("percentiles").unwrap().split(",") {
+        match i32::from_str(&part) {
+            Err(e) => panic!("invalid percentile: {}: {}", e, &part),
+            Ok(p) => percentiles.push(p),
+        }
+    }
+
 	let file_path = matches.value_of("input").unwrap();
     let path = Path::new(&file_path);
     let display = path.display();
@@ -94,6 +107,7 @@ fn main() {
 	let file = BufReader::with_capacity(128 * 1024, &f);
 
     let mut timings: Vec<f32> = vec![];
+    let mut has_errors: bool = false;
 
 	for line in file.lines().filter_map(|result| result.ok()) {
 		let v: Vec<&str> = line.split(separator).collect();
@@ -106,10 +120,17 @@ fn main() {
 			println!("{}", line);
 		}
         match f32::from_str(&t) {
-            Err(_) => continue,
+            Err(_) => {
+                has_errors = true;
+                continue;
+            },
             Ok(f) => timings.push(f),
         };
     }
 
-    print_results(timings);
+    if timings.len() == 0 && has_errors {
+        panic!("column {} does not contain valid numbers", timing_index)
+    }
+
+    print_results(timings, percentiles);
 }

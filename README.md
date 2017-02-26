@@ -23,8 +23,9 @@ FLAGS:
     -V, --version    Prints version information
 
 OPTIONS:
-    -c, --column <column>          Column number to use [default: 8]
-    -s, --separator <separator>    Column separator [default:  ]
+    -c, --column <column>              Column number to use [default: 8]
+    -r, --percentiles <percentiles>    Percentiles to compute [default: 70,80,95,99]
+    -s, --separator <separator>        Column separator [default:  ]
 
 ARGS:
     <input>    Sets the input file to use
