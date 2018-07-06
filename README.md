@@ -7,7 +7,7 @@ Calculate percentiles on response time from logs.
 vladimirbright@percentile2$ cargo build --release
 ```
 
-## Get help.
+## Get help
 ```
 
 vladimirbright@percentile2$ time ./target/release/percentile --help
@@ -35,7 +35,7 @@ user    0m0.002s
 sys     0m0.002s
 ```
 
-## And we can run it.
+## And we can run it
 
 ```
 vladimirbright@percentile2$ time ./target/release/percentile --separator=' ' --column=8 ../percentile/logs/access.log
